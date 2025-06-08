@@ -1,0 +1,26 @@
+# Eclipse
+.classpath
+.project
+.settings/
+bin/
+
+
+# Xtext generated files
+*.generated.*
+src-gen/
+xtend-gen/
+
+# Maven
+target/
+*.log
+
+# Gradle (si utilisé)
+build/
+.gradle/
+
+# Autres fichiers temporaires
+*.bak
+*.swp
+*~.nib
+.DS_Store
+.metadata/

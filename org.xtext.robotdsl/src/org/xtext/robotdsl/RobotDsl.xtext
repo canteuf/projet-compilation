@@ -1,0 +1,76 @@
+grammar org.xtext.robotdsl.RobotDsl with org.eclipse.xtext.common.Terminals
+
+generate robotDsl "http://www.xtext.org/robotdsl/RobotDsl"
+
+// Programme principal
+Model:
+    statements+=Statement*;
+
+// Types d'instructions : déclarations, règles ou boucles
+Statement:
+    Declaration | Rule | Loop;
+
+// Déclaration de capteurs et actionneurs
+Declaration:
+    SensorDeclaration | ActuatorDeclaration;
+
+// Déclaration d'un capteur avec un type
+SensorDeclaration:
+    'sensor' name=ID ':' type=SensorType;
+
+// Types de capteurs
+enum SensorType:
+    DISTANCE='distance' | TEMPERATURE='temperature' | LIGHT='light' | 
+    PRESSURE='pressure' | SOUND='sound' | COLOR='color' | 
+    ANGLE='angle' | HUMIDITY='humidity' | VIBRATION='vibration';
+
+// Déclaration d'un actionneur
+ActuatorDeclaration:
+    'actuator' name=ID;
+
+// Règle conditionnelle avec un bloc d'instructions
+Rule:
+    'if' condition=Condition 'begin' actions+=Action* 'end';
+
+// Boucle avec un nombre d'itérations
+Loop:
+    'loop' count=INT 'begin' statements+=Statement* 'end';
+
+// Condition : simple ou composite
+Condition:
+    SimpleCondition | CompositeCondition;
+
+// Condition simple sur un capteur
+SimpleCondition:
+    sensor=[SensorDeclaration] comparator=Comparator value=INT;
+
+// Condition composite avec opérateurs logiques
+CompositeCondition:
+    'not' condition=Condition |
+    '(' left=Condition op=('and' | 'or') right=Condition ')';
+
+// Action sur un actionneur : état ou paramètre
+Action:
+    StateAction | ParamAction;
+
+// Action pour activer/désactiver un actionneur
+StateAction:
+    {StateAction} actuator=[ActuatorDeclaration] '=' state=State;
+
+// Action pour définir un paramètre
+ParamAction:
+    {ParamAction} actuator=[ActuatorDeclaration] 'set' parameter=ActuatorParameterType '=' value=INT;
+
+// Paramètres des actionneurs
+enum ActuatorParameterType:
+    SPEED='SPEED' | BRIGHTNESS='BRIGHTNESS' | DIRECTION='DIRECTION' | 
+    VOLUME='VOLUME' | FREQUENCY='FREQUENCY' | ANGLE='ANGLE' | 
+    POWER='POWER' | COLOR='COLOR' | DURATION='DURATION';
+
+// Opérateurs de comparaison
+enum Comparator:
+    IN='<' | IEG='<=' | SU='>' | SEG='>=' | EG='==' | DF='!=';
+
+// État des actionneurs
+enum State:
+    ON='on' | OFF='off';
